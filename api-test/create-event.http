@@ -1,9 +1,9 @@
 POST http://localhost:8080/events
 Content-Type: application/json
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QyQGV4YW1wbGUuY29tIiwiZXhwIjoxNzU5NTcwODk4LCJ1c2VySWQiOjJ9.iii7WLaLUjCtTaiPI97Wae1v_qK2fqBnod_US8115gM
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QxQGV4YW1wbGUuY29tIiwiZXhwIjoxNzU5NTc2MzM5LCJ1c2VySWQiOjF9.QaUp95tPs_cX7Dj6x7wO15IdNVD8EjswpQ-ResnKP7Y
 
 {
-  "name": "Sample Event008",
+  "name": "Sample Event1",
   "description": "This is another sample!!!",
   "location": "Another sameple location",
   "dateTime": "2025-09-28T15:51:00.000Z"
