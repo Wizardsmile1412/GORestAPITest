@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"database/sql"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -8,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func registerForEvent(context *gin.Context){
+func registerForEvent(context *gin.Context) {
 	userId := context.GetInt64("userId")
 	eventId, err := strconv.ParseInt(context.Param("id"), 10, 64)
 	if err != nil {
@@ -28,10 +30,10 @@ func registerForEvent(context *gin.Context){
 		return
 	}
 
-	context.JSON(http.StatusCreated, gin.H{"message":"Registered!"})
+	context.JSON(http.StatusCreated, gin.H{"message": "Registered!"})
 }
 
-func cancelRegistration(context *gin.Context){
+func cancelRegistration(context *gin.Context) {
 	userId := context.GetInt64("userId")
 	eventId, err := strconv.ParseInt(context.Param("id"), 10, 64)
 	if err != nil {
@@ -44,10 +46,23 @@ func cancelRegistration(context *gin.Context){
 
 	err = event.CancelRegistration(userId)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			context.JSON(http.StatusNotFound, gin.H{"message": "No registration found for this event."})
+			return
+		}
 		context.JSON(http.StatusInternalServerError, gin.H{"messege": "Could not cancel registration."})
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"message":"Cancelled!"})
-	
+	context.JSON(http.StatusOK, gin.H{"message": "Cancelled!"})
+}
+
+func getRegistrations(context *gin.Context) {
+	events, err := models.GetAllRegistrations()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"messege": "Could not fetch registrations. Try again later."})
+		return
+	}
+
+	context.JSON(http.StatusOK, events)
 }

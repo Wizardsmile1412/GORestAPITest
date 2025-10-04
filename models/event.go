@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"time"
 
 	"example.com/restAPIProject/db"
@@ -93,7 +94,7 @@ func (e Event) Update() error {
 	return err
 }
 
-func (e Event) Delete() error{
+func (e Event) Delete() error {
 	query := `
 	DELETE FROM events
 	WHERE id = ?
@@ -113,7 +114,7 @@ func (e Event) Delete() error{
 func (e Event) Register(userId int64) error {
 	query := "INSERT INTO registrations(event_id, user_id) VALUES(?, ?)"
 	stmt, err := db.DB.Prepare(query)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
@@ -124,15 +125,28 @@ func (e Event) Register(userId int64) error {
 	return err
 }
 
-func (e Event) CancelRegistration(userId int64) error{
+func (e Event) CancelRegistration(userId int64) error {
 	query := "DELETE FROM registrations WHERE event_id = ? AND user_id = ?"
 	stmt, err := db.DB.Prepare(query)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(e.ID, userId)
-	return err
+	result, err := stmt.Exec(e.ID, userId)
+	if err != nil {
+		return err
+	}
+
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if affected == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
 }
